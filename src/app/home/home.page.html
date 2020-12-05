@@ -1,20 +1,24 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
+  <ion-toolbar color="warning">
+    <ion-button (click)="lerMapa()" shape= "round" color= "dark">
+      <ion-icon slot="start" name="locate"></ion-icon>
+      Localizar:
+    </ion-button>
+    <ion-title slot="end">
+     Mapa
     </ion-title>
   </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+<ion-content [fullscreen]="true">
+<div #map id="map"></div>
+<div id="container">
+  <p> Latitude :  {{ latitude }}</p>
+  <p> Longitude :  {{ longitude }}</p>
+  <p> Endereço :   {{ endereco }}</p>
+
+   </div>
+
 </ion-content>
+
+  

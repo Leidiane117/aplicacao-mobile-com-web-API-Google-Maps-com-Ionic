@@ -1,5 +1,7 @@
 {
   "name": "webApi",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
