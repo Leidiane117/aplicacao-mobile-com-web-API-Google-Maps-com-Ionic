@@ -1,15 +1,21 @@
-#container {
-  text-align: center;
 
-}
-#container  {
+
+h5 {
   font-size: 16px;
   line-height: 22px;
-  color: #8c8c8c;
+  color: darkblue;
   margin: 0;
+   text-align: center;
+
 }
 
 #map{
  width: 100%;
  height: 70vh;
+}
+
+ion-list{
+
+background-color: lightgray;
+box-shadow: 0 0 10px rgba(0,0,0,0.5); // pra lista ficar com uma borda mais bonita
 }

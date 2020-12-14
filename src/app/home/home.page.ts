@@ -1,5 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import {Geolocation} from '@ionic-native/geolocation/ngx';
+import { Component, ElementRef, OnInit, ViewChild,NgZone } from '@angular/core';
 import {NativeGeocoder, NativeGeocoderOptions, NativeGeocoderResult} from '@ionic-native/native-geocoder/ngx';
 
 
@@ -9,81 +8,98 @@ declare var google: any; // varíavel global, da api do google
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
   @ViewChild(
     'map', { static: false})mapElement: ElementRef; // decorator para mandar mostrar o mapa na nossa div
   map: any; // que irá receber nosso map
-  latitude: number;
-  longitude: number;
-  endereco: any;
+  autocompleteItems: any[]; //array que recebera os itens 
+  autocomplete: { input: string; }; // atributo que irá receber o meu input, vai iniciar vazio
+  googleAutocomplete: any; //atributo que irá receber o autocomplete objeto
+  description:any;
+
   constructor(
-    private  geolocation: Geolocation, private nativeGeocoder: NativeGeocoder
+   private nativeGeocoder: NativeGeocoder, private zone: NgZone
+   
     )
-  {}
-
-  lerMapa(){
-    this.geolocation.getCurrentPosition().then((resp) => {
-      //let latitude = 23.5227;
-      //let longitude = -46.8368; // variáveis locais;
-     this.latitude = resp.coords.latitude; // coordenadas da minha localozação 
-     this.longitude = resp.coords.longitude;
-
-     const latinlng = new google.maps.LatLng(this.latitude, this.longitude);
-
-     const mapOptions = // configurações do mapa 
-     {
-       center : latinlng,
-       zoom : 15,
-      // mapTypeId : google.maps.mapTypeId.ROADMAP // na hora de compilar estava dando undefined, por isso retirei o ROADMap
-     }
-
-   this.map = new google.maps.Map (this.mapElement.nativeElement, mapOptions);
-    this.map.addListener('dragend', () => { // atributo map que irá receber o método da api google maps
-      this.latitude = this.map.center.lat(); // listener que atualiza de acordo com a posição do mapa
-      this.longitude = this .map.center.lng();
-     });
-    new google.maps.Marker ( { // adicionando um marcador da localização pesquisada
-     position: new google.maps.LatLng(this.latitude, this.longitude),
-     title: 'Pin Point',
-     map: this.map,
-     icon: 'assets/img/point.png' // imagem do meu marcador
-    });
-    
-  this.obterEndereco(this.latitude, this.longitude);
-   }); // chamando meu métpdo que vai obter o endereço 
+  { this.autocomplete={ input: ""};
+    this.autocompleteItems= [];
+    this.googleAutocomplete =  new google.maps.places.AutocompleteService();
     
   }
-  obterEndereco(latitude: number, longitude: number) {
-    console.log("Coordenadas: " + latitude + " " + longitude);
-    const options: NativeGeocoderOptions = {
-       useLocale: true,
-       maxResults: 5
-      };
+  ngOnInit() {
+     
+    //throw new Error('Method not implemented.');
+  }
 
-     this.nativeGeocoder.reverseGeocode(latitude, longitude, options)
-      .then((result: NativeGeocoderResult[]) => {
-        this.endereco = '';
-        const responseAddress = [];
-        for (const [key, value] of Object.entries(result[0])) {
-          if (value.length > 0) { // se valor maior que 0/ valor da pesquisa
-            responseAddress.push(value); // alimentar o array 
-          }
-        }
-        responseAddress.reverse();
-        this.endereco = responseAddress[2] + ', ' +
-          responseAddress[1] + ' ' +
-          responseAddress[3] + ' ' +
-          responseAddress[4] + ' ' +
-          responseAddress[5] + ' ' +
-          responseAddress[6] + ' ' +
-          responseAddress[7] + ' ' +
-          responseAddress[8];
-      })
-      .catch((error: any) => {
-        this.endereco = 'Endereço não disponível!'; // caso de erro
-      });
+  lerMapa(item: any){ // parametro item do meu método ler mapa
+    let options: NativeGeocoderOptions = {
+      useLocale: true,
+      maxResults: 5 // limitar resultados da busca
+  };
  
-    }
+  
+  this.nativeGeocoder.forwardGeocode(item.description, options)
+    .then((result: NativeGeocoderResult[]) => 
+    {    
+    
+    
+    let latitude= result[0].latitude; // variáveis locais
+    let longitude= result[0].longitude;
+      
+      const latLng = new google.maps.LatLng(latitude,longitude);
+
+      const mapOptions = // configurações do mapa 
+      {
+        center : latLng,
+        zoom : 15,
+        mapTypeId : google.maps.mapTypeId.ROADMAP 
+      }
+ 
+    this.map = new google.maps.Map (this.mapElement.nativeElement, mapOptions);
+    this.autocomplete={input: item.description};
+    this.autocompleteItems=[];
+
+     new google.maps.Marker ( { // adicionando um marcador da localização pesquisada
+      position: new google.maps.LatLng(latitude, longitude),
+      title: 'Pin Point',
+      map: this.map,
+      animation: google.maps.Animation.DROP,
+      icon: 'assets/img/point.png' // imagem do meu marcador
+     });
+    })
+    .catch((error: any)=> alert(error));
 
   }
 
+
+
+  updateProcurar(){ // pesquisar os items e jogar no meu array
+    if(this.autocomplete.input== ""){
+
+      this.autocompleteItems = [];
+      return; // sai do método para n ficar fazendo requisições vazias
+
+    }
+    this.googleAutocomplete.getPlacePredictions({ input: this.autocomplete.input},
+      
+      (predictions: any, status: any) => {
+        this.autocompleteItems = [];
+        this.zone.run(() => {
+          predictions.forEach((prediction) => { // foreach vai percorrer os possíveis endereços achados da api
+            this.autocompleteItems.push(prediction);// na hora de compilar estava dando a propriedade forEach null            
+          }); 
+        });
+
+
+      });
+
+  }
+
+
+}
+
+
+
+   
+    
+ 

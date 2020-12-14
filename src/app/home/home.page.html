@@ -1,23 +1,42 @@
 <ion-header [translucent]="true">
+  
+<br>
   <ion-toolbar color="warning">
-    <ion-button (click)="lerMapa()" shape= "round" color= "dark">
+    <ion-button shape= "round" color= "dark">
       <ion-icon slot="start" name="locate"></ion-icon>
       Localizar:
     </ion-button>
     <ion-title slot="end">
-     Mapa
+      <ion-icon name="globe"></ion-icon> Mapa
     </ion-title>
   </ion-toolbar>
   </ion-header>
 
 <ion-content [fullscreen]="true">
-<div #map id="map"></div>
-<div id="container">
-  <p> Latitude :  {{ latitude }}</p>
-  <p> Longitude :  {{ longitude }}</p>
-  <p> Endereço :   {{ endereco }}</p>
 
-   </div>
+
+  <ion-item>
+    <ion-label position="floating"> Endereço de Pesquisa : </ion-label>
+    <ion-input type="text" [(ngModel)]="autocomplete.input" (ionInput)= "updateProcurar()" clearInput>
+    </ion-input> 
+    <!-- ng model atualiza o atributo de acordo com o input do usuário! , atributo autocomplete do angular captura os caracteres digitados em tempo real
+    evento ionInput vai pegando os dados e envia p  o método update, que  irá atualizando de acordo com que estou digitando-->
+  </ion-item>
+
+  <ion-list class="ion-margin-horizontal" [hidden]="autocompleteItems.length==0"> <!-- lista oculata enquanto não tiver algo digitado-->
+    <ion-item *ngFor= "let item of autocompleteItems" (click)="lerMapa(item)">
+       {{ item.description }} <!-- pegar só a descrição do item-->
+    </ion-item>
+  </ion-list>
+
+
+<div #map id="map"></div>
+
+   
+   <h5>
+     Leidiane Soares<br>
+     Bruna Gonçalves
+   </h5>
 
 </ion-content>
 
