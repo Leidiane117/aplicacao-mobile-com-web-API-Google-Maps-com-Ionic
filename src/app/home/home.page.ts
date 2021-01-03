@@ -52,7 +52,7 @@ export class HomePage implements OnInit {
       {
         center : latLng,
         zoom : 15,
-        mapTypeId : google.maps.mapTypeId.ROADMAP 
+        mapTypeId : google.maps.MapTypeId.ROADMAP 
       }
  
     this.map = new google.maps.Map (this.mapElement.nativeElement, mapOptions);
