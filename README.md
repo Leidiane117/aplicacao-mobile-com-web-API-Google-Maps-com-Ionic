@@ -36,8 +36,6 @@ Angular--------------------- Para utilizar o modelo de arquitetura de módulos e
 
 Cordova--------------------- Como servidor do aplicativo Mobile
 
-Linguagens  TypeScript,SASS e HTML5--------------------- Para 
-
 Plataforma IONIC------------------------------------ Para o desenvolvimento do aplicativo híbrido
 
 Sistema Operacional --------------------------Windos 10 
