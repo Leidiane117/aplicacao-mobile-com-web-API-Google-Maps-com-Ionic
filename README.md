@@ -1,5 +1,5 @@
 
-# Google Maps API com Ionic
+# Google Maps API com Ionic 🌏
 
 
 ## Aplicativo desenvolvido com proposito de  utilizar a api do google maps em dispositivos Mobile para pesquisar endereços 
